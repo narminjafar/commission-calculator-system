@@ -26,9 +26,18 @@ class CommissionService implements CommissionServiceInterface
 
     private function resolveKey(Transaction $tx): string
     {
-        if ($tx->operation_type === 'cash_out') {
-            return "cash_out_{$tx->user_type}";
+        if ($tx->operation_type === 'withdraw') {
+            return "cash_out_{$tx->user_type}"; // private / business
         }
-        return $tx->operation_type;
+
+        if ($tx->operation_type === 'deposit') {
+            return 'cash_in';
+        }
+
+        if ($tx->operation_type === 'loan_repayment') {
+            return 'loan_repayment';
+        }
+
+          throw new \RuntimeException("No strategy registered for {$tx->operation_type}");
     }
 }

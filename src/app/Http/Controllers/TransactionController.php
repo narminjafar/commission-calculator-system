@@ -20,13 +20,17 @@ class TransactionController extends Controller
     {
         $transactions = $this->importer->import($request->file('csv')->getRealPath());
 
+
         $filters = $request->only(['user_id', 'user_type', 'operation_type', 'date_from', 'date_to']);
 
         $filtered = app(Pipeline::class)
             ->send($transactions)
             ->through([new FilterTransactions($filters)])
-            ->thenReturn()
-            ->get();
+            ->thenReturn();
+
+        $filtered = $filtered instanceof \Illuminate\Database\Eloquent\Builder
+            ? $filtered->get()
+            : $filtered;
 
         $result = collect($filtered)->map(fn($tx) => TransactionFeeDTO::fromTransaction($tx, $this->commissionService));
 

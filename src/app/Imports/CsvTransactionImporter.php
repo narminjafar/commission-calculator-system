@@ -32,7 +32,7 @@ class CsvTransactionImporter implements TransactionImporterInterface
                 throw InvalidTransactionException::forRow($lineNo + 1, "Invalid user_type '{$userType}'");
             }
 
-            if (!in_array($operationType, ['cash_in', 'cash_out', 'loan_repayment'])) {
+            if (!in_array($operationType, ['withdraw', 'deposit', 'loan_repayment'])) {
                 throw InvalidTransactionException::forRow($lineNo + 1, "Invalid operation_type '{$operationType}'");
             }
 
